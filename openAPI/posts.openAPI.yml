@@ -11,10 +11,6 @@ tags:
   description: Posts endpoints
 - name: votes
   description: voting endpoint
-- name: feedbacks
-  description: End point for posting and fetching feedbacks
-security:
-- firebaseAuth: []
 paths:
   "/posts":
     post:
@@ -29,6 +25,7 @@ paths:
           description: Bad request
         '401':
           "$ref": "#/components/responses/UnauthorizedError"
+          # ToBeAsked: Add different error responses
       requestBody:
         content:
           multipart/form-data:
@@ -229,13 +226,13 @@ paths:
       operationId: addFeedback
       responses:
         '201':
-          description: Created
+          "$ref": "#/components/responses/SuccessfulFeedback"
         '400':
-          description: Bad request
+          "$ref": "#/components/responses/BadRequestError"
         '401':
           "$ref": "#/components/responses/UnauthorizedError"
         '429':
-          description: Too Many Requests
+          "$ref": "#/components/responses/TooManyRequestsError"
       requestBody:
         content:
           application/json:
@@ -284,50 +281,6 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/Category"
-  "/reports":
-    post:
-      tags:
-      - reports
-      summary: send report for post
-      operationId: postReport
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: success
-                  data:
-                    type: object
-                    "$ref": "#/components/schemas/Report"
-        '400':
-          description: Bad request
-        '401':
-          "$ref": "#/components/responses/UnauthorizedError"
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: fail
-                  error:
-                    type: string
-                    example: User can't report his post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/Report"
-        description: Updated user object
-        required: true
 components:
   schemas:
     Post-Owner:
@@ -455,8 +408,14 @@ components:
       type: http
       scheme: bearer
   responses:
+    SuccessfulFeedback:
+      description: Post created successfully 
+    BadRequestError:
+      description: Bad Request Error occured
     UnauthorizedError:
-      description: UnAuthorized Access token is missing or invalid
+      description: Unauthorized. Access token is missing or invalid
+    TooManyRequestsError:
+      description: Too many requests are being made
 servers:
 - description: Try it Now
   url: https://pickly-posts-be-dev.m3ntorship.net/
