@@ -1,0 +1,18 @@
+@startuml
+hide footbox
+
+actor user
+
+participant postService
+participant mediaService
+participant provider
+
+' Some edits needed here!
+
+user -> postService : Request Feed
+postService -> mediaService: Request files
+mediaService -> postService: Files
+postService -> user: Posts
+user -> mediaService : Browser requests image blobs
+mediaService -> provider : Proxy image bolbs from provider to the client
+@enduml

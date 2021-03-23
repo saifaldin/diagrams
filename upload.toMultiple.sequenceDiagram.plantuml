@@ -1,0 +1,20 @@
+@startuml
+hide footbox
+
+participant mediaService
+participant uploadService
+participant provider1
+participant provider2
+participant providerN
+
+mediaService -> uploadService : Binary File
+uploadService -> provider1: Upload Request
+uploadService [#Blue]-> provider2: Upload Request
+uploadService -> providerN: Upload Request
+
+provider1 -> uploadService : Data Response
+provider2 -> uploadService : Data Response
+providerN -> uploadService : Data Response
+
+uploadService -> mediaService : URLs
+@enduml

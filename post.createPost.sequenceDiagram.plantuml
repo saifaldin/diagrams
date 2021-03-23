@@ -1,0 +1,16 @@
+@startuml
+hide footbox
+
+actor user
+
+participant postService
+participant mediaService
+participant uploadService
+
+user -> postService : Request to create post
+postService -> mediaService: Binary files (if exists)
+mediaService -> uploadService: New binary files
+uploadService -> mediaService: URLs
+mediaService -> postService: Masked URLs
+
+@enduml

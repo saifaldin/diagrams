@@ -1,0 +1,14 @@
+@startuml
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity "Media" as media {
+    *original_url: text <<PK>>
+    --
+    *masked_url: text
+}
+
+@enduml
