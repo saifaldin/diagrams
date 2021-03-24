@@ -7,7 +7,7 @@ info:
 tags:
   - name: posts
     description: Posts endpoints
-paths:  
+paths:
   /posts:
     post:
       tags:
@@ -30,11 +30,42 @@ paths:
       tags:
         - "posts"
       summary: Get posts
-      operationId: get
+      operationId: get feed
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: number
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: number
+          description: The numbers of items to return
       responses:
         200:
           description: Get all posts
           $ref: "#/components/responses/getPosts"
+  /posts/{postid}:
+    get:
+      tags:
+        - "posts"
+      summary: Get one post
+      operationId: get one post
+      parameters:
+        - in: path
+          name: postid
+          required: true
+          schema:
+            type: number
+          description: id of post needed
+      responses:
+        200:
+          description: Get post with the provided id
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/getPost"
 components:
   schemas:
     post:
@@ -114,6 +145,26 @@ components:
                 type: string
               textOptions:
                 $ref: "#/components/schemas/postTextOptionsGET"
+    getPost:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "some-id"
+        caption:
+          type: string
+          example: "some-caption"
+        isOwnedByCurrentUser:
+          type: boolean
+        isHidden:
+          type: boolean
+          example: false
+        content:
+          type: object
+          oneOf:
+            - $ref: "#/components/schemas/postTextOptionsGET"
+            - $ref: "#/components/schemas/postImageOptionsGET"
+            - $ref: "#/components/schemas/postMiniSurveyOptionsGET"
     GenericError:
       type: object
       properties:
@@ -159,26 +210,7 @@ components:
           schema:
             type: array
             items:
-              type: object
-              properties:
-                id:
-                  type: string
-                  example: "some-id"
-                caption:
-                  type: string
-                  example: "some-caption"
-                isOwnedByCurrentUser:
-                  type: boolean
-                isHidden:
-                  type: boolean
-                  example: false
-                content:
-                  type: object
-                  oneOf:
-                    - $ref: "#/components/schemas/postTextOptionsGET"
-                    - $ref: "#/components/schemas/postImageOptionsGET"
-                    - $ref: "#/components/schemas/postMiniSurveyOptionsGET"
-
+              $ref: "#/components/schemas/getPost"
     BadRequestError:
       description: Bad Request Error occured
       content:
