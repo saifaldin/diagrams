@@ -1,9 +1,7 @@
 ---
 openapi: 3.0.0
 info:
-  description: "Post Service API Specs
-
-    "
+  description: "Post Service API Specs"
   version: 1.0.0
   title: Pickly Post Service
 tags:
@@ -12,18 +10,6 @@ tags:
   - name: votes
     description: voting endpoint
 paths:
-  "/pets":
-    patch:
-      requestBody:
-        content:
-          application/json:
-            schema:
-              anyOf:
-                - $ref: "#/components/schemas/Dog"
-                - $ref: "#/components/schemas/Cat"
-      responses:
-        "200":
-          description: Updated
   "/posts":
     post:
       tags:
@@ -46,27 +32,9 @@ paths:
         "401":
           "$ref": "#/components/responses/UnauthorizedError"
           # ToBeAsked: Add different error responses
-        "429":
-          description: Too many requests
-          "$ref": "#/components/responses/TooManyRequestsError"
 
 components:
   schemas:
-    Dog:
-      type: object
-      properties:
-        bark:
-          type: boolean
-        breed:
-          type: string
-          enum: [Dingo, Husky, Retriever, Shepherd]
-    Cat:
-      type: object
-      properties:
-        hunts:
-          type: boolean
-        age:
-          type: integer
     postCreationBody:
       type: object
       properties:
@@ -98,7 +66,6 @@ components:
         format: binary
     miniSurveyOptions:
       "$ref": "#/components/schemas/miniSurvey"
-
     miniSurvey:
       type: object
       properties:
@@ -116,6 +83,17 @@ components:
                 type: array
                 items:
                   type: string
+    GenericError:
+      type: object
+      properties:
+        message:
+          type: array
+          items:
+            type: string
+          example: ["error1", "error2"]
+        statusCode:
+          type: number
+          default: 123
   securitySchemes:
     firebaseAuth:
       type: http
@@ -128,9 +106,6 @@ components:
           schema:
             type: object
             properties:
-              success:
-                type: boolean
-                default: true
               id:
                 type: string
                 example: "some-id"
@@ -144,17 +119,10 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                default: false
-              message:
-                type: string
+            "$ref": "#/components/schemas/GenericError"
     UnauthorizedError:
       description: Unauthorized. Access token is missing or invalid
-    TooManyRequestsError:
-      description: Too many requests are being made
+    
 servers:
   - description: Try it Now
     url: https://pickly-posts-be-dev.m3ntorship.net/
