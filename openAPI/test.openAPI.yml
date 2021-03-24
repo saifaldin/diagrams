@@ -57,7 +57,7 @@ components:
             - $ref: "#/components/schemas/postImageOptionsPOST"
             - $ref: "#/components/schemas/postMiniSurveyOptionsPOST"
       required: ["isHidden", "type"]
-    postTextOptions:
+    postTextOptionsPOST:
       type: array
       items:
         type: string
@@ -81,13 +81,25 @@ components:
               groupTitle:
                 type: string
               textOptions:
-                type: array
-                items:
-                  type: string
+                $ref: "#/components/schemas/postTextOptionsPOST"
+    postTextOptionsGET:
+      type: array
+      items:
+        type: object
+        properties:
+          content:
+            type: string
+          voteCount:
+            type: number
     postImageOptionsGET:
       type: array
       items:
-        type: string
+        type: object
+        properties:
+          content:
+            type: string
+          voteCount:
+            type: number
     postMiniSurveyOptionsGET:
       type: object
       properties:
@@ -101,9 +113,7 @@ components:
               groupTitle:
                 type: string
               textOptions:
-                type: array
-                items:
-                  type: string
+                $ref: "#/components/schemas/postTextOptionsGET"
     GenericError:
       type: object
       properties:
@@ -159,14 +169,13 @@ components:
                   example: "some-caption"
                 isOwnedByCurrentUser:
                   type: boolean
-        
                 isHidden:
                   type: boolean
                   example: false
                 content:
                   type: object
                   oneOf:
-                    - $ref: "#/components/schemas/postTextOptions"
+                    - $ref: "#/components/schemas/postTextOptionsGET"
                     - $ref: "#/components/schemas/postImageOptionsGET"
                     - $ref: "#/components/schemas/postMiniSurveyOptionsGET"
 
