@@ -46,6 +46,12 @@ paths:
         200:
           description: Get all posts
           $ref: "#/components/responses/getPosts"
+        400:
+          description: Bad request
+          $ref: "#/components/responses/BadRequestError"
+        401:
+          description: Unauthorized.
+          $ref: "#/components/responses/UnauthorizedError"
   /posts/{postid}:
     get:
       tags:
@@ -64,8 +70,64 @@ paths:
           description: Get post with the provided id
           content:
             application/json:
-              schema: 
+              schema:
                 $ref: "#/components/schemas/getPost"
+        400:
+          description: Bad request
+          $ref: "#/components/responses/BadRequestError"
+        401:
+          description: Unauthorized.
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags:
+        - "posts"
+      summary: Delete one post
+      operationId: Delete one post
+      parameters:
+        - in: path
+          name: postid
+          required: true
+          schema:
+            type: number
+          description: id of post needed
+      responses:
+        204:
+          description: Delete one post
+          $ref: "#/components/responses/deletePost"
+        400:
+          description: Bad request
+          $ref: "#/components/responses/BadRequestError"
+        401:
+          description: Unauthorized.
+          $ref: "#/components/responses/UnauthorizedError"
+  /posts/votes/{optionid}:
+    post: 
+      tags:
+        - "posts"
+      summary: Add vote
+      operationId: Add vote
+      parameters:
+        - in: path
+          name: optionid
+          required: true
+          schema:
+            type: number
+          description: id of option
+      requestBody:
+        $ref: "#/components/requestBodie/addVote"
+      responses:
+        200:
+          description: Get post with the provided id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/getPost"
+        400:
+          description: Bad request
+          $ref: "#/components/responses/BadRequestError"
+        401:
+          description: Unauthorized.
+          $ref: "#/components/responses/UnauthorizedError"
 components:
   schemas:
     post:
@@ -211,6 +273,13 @@ components:
             type: array
             items:
               $ref: "#/components/schemas/getPost"
+    deletePost:
+      description: Delete one post
+      content:
+        application/json:
+          schema:
+            type: string
+
     BadRequestError:
       description: Bad Request Error occured
       content:
