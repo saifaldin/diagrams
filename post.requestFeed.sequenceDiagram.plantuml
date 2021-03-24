@@ -7,7 +7,7 @@ participant postService
 participant mediaService
 participant provider
 
-user -> postService : Request Feed
+user -> postService : Request Post
 postService -> user: Posts
 group Proxying
 user -> mediaService : Browser requests image blobs

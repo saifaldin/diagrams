@@ -11,7 +11,7 @@ user -> postService : Request to create post
 alt Binary files exits
 postService -> mediaService: Binary files
 mediaService -> uploadService: New binary files
-uploadService -> mediaService: URLs
+uploadService -> mediaService: Original URLs
 mediaService -> postService: Masked URLs
 postService -> user: Success
 else No binary files
