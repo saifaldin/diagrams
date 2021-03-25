@@ -13,22 +13,22 @@ participant notificationService
 end box
 
 box "Get notification" #LightCyan
-actor endUser1
+actor user1
 participant notificationService1
 end box
 
 box "Update notification state" #LightPink
-actor endUser2
+actor user2
 participant notificationService2
 end box
 
 
-endUser -> client : Some action
-&endUser1 -> notificationService1 : Request notifications
-&endUser2 -> notificationService2 : Update notification
+endUser -> client : Action that\ntriggers notification
+&user1 -> notificationService1 : Request notifications
+&user2 -> notificationService2 : Update notification
 client -> endUser : Success
-&notificationService1 -> endUser1 : Notifications
-&notificationService2 -> endUser2 : Success
+&notificationService1 -> user1 : Notifications
+&notificationService2 -> user2 : Success
 client -> notificationService: Create notification
 
 @enduml

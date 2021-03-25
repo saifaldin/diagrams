@@ -100,10 +100,10 @@ paths:
         401:
           description: Unauthorized.
           $ref: "#/components/responses/UnauthorizedError"
-  /posts/votes/{optionid}:
-    post: 
+  /votes/{optionid}:
+    put: 
       tags:
-        - "posts"
+        - "votes"
       summary: Add vote
       operationId: Add vote
       parameters:
@@ -113,21 +113,24 @@ paths:
           schema:
             type: number
           description: id of option
-      requestBody:
-        $ref: "#/components/requestBodie/addVote"
+      # requestBody:
+      #   $ref: "#/components/requestBodie/addVote"
       responses:
-        200:
-          description: Get post with the provided id
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/getPost"
+        # 200:
+        #   description: Get post with the provided id
+        #   content:
+        #     application/json:
+        #       schema: 
+        #         $ref: "#/components/schemas/getPost"
         400:
           description: Bad request
           $ref: "#/components/responses/BadRequestError"
         401:
-          description: Unauthorized.
+          description: Unauthorized
           $ref: "#/components/responses/UnauthorizedError"
+        409:
+          description: Conflict
+          $ref: "#/components/responses/ConflictError"
 components:
   schemas:
     post:
@@ -288,6 +291,12 @@ components:
             $ref: "#/components/schemas/GenericError"
     UnauthorizedError:
       description: Unauthorized.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GenericError"
+    ConflictError:
+      description: Conflict.
       content:
         application/json:
           schema:
