@@ -94,9 +94,9 @@ paths:
         204:
           description: Delete one post
           $ref: "#/components/responses/deletePost"
-        400:
-          description: Bad request
-          $ref: "#/components/responses/BadRequestError"
+        404:
+          description: Not Found
+          $ref: "#/components/responses/NotFoundError"
         401:
           description: Unauthorized.
           $ref: "#/components/responses/UnauthorizedError"
@@ -116,12 +116,16 @@ paths:
       # requestBody:
       #   $ref: "#/components/requestBodie/addVote"
       responses:
-        # 200:
-        #   description: Get post with the provided id
-        #   content:
-        #     application/json:
-        #       schema: 
-        #         $ref: "#/components/schemas/getPost"
+        200:
+          description: Add vote on option
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  votesCount: 
+                    type: number
+                
         400:
           description: Bad request
           $ref: "#/components/responses/BadRequestError"
@@ -129,7 +133,7 @@ paths:
           description: Unauthorized
           $ref: "#/components/responses/UnauthorizedError"
         409:
-          description: Conflict
+          description: Conflict when user votes twice on same option
           $ref: "#/components/responses/ConflictError"
 components:
   schemas:
@@ -213,14 +217,24 @@ components:
     getPost:
       type: object
       properties:
+        user: 
+          type: object
+          properties: 
+            id: 
+              type: string
+              example: "some-id"
+            name: 
+              type: string
+              example: "John Doe"
+            profilePic: 
+              type: string
+              example: "URL"
         id:
           type: string
           example: "some-id"
         caption:
           type: string
           example: "some-caption"
-        isOwnedByCurrentUser:
-          type: boolean
         isHidden:
           type: boolean
           example: false
@@ -230,6 +244,11 @@ components:
             - $ref: "#/components/schemas/postTextOptionsGET"
             - $ref: "#/components/schemas/postImageOptionsGET"
             - $ref: "#/components/schemas/postMiniSurveyOptionsGET"
+        createdAt: 
+          type: string
+          example: "13 May, 2020 UTC"
+      required:
+        ['createdAt', 'content', 'isHidden', 'id']
     GenericError:
       type: object
       properties:
@@ -273,16 +292,16 @@ components:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: "#/components/schemas/getPost"
+            type: object
+            properties:
+              postsCount: 
+                type: number
+              posts: 
+                type: array
+                items:
+                  $ref: "#/components/schemas/getPost"
     deletePost:
-      description: Delete one post
-      content:
-        application/json:
-          schema:
-            type: string
-
+      description: Post deleted     
     BadRequestError:
       description: Bad Request Error occured
       content:
@@ -296,7 +315,7 @@ components:
           schema:
             $ref: "#/components/schemas/GenericError"
     ConflictError:
-      description: Conflict.
+      description: Conflict when user votes twice on same option.
       content:
         application/json:
           schema:
@@ -307,7 +326,12 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/GenericError"
-
+    NotFoundError:
+      description: Not Found
+      content: 
+        application/json:
+          schema: 
+            $ref: "#/components/schemas/GenericError"
 servers:
   - description: Try it Now
     url: https://pickly-posts-be-dev.m3ntorship.net/
