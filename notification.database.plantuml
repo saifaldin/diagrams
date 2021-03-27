@@ -10,9 +10,10 @@ entity "Notifications" as notifications {
     --
     *action: text
     *state: text
-    *timestamp: text
+    *createdAt: text
     *notifier: number <<FK>>
     *notified: number <<FK>>
+    *entity: number <<FK>>
 }
 
 @enduml
