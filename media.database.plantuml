@@ -1,4 +1,4 @@
-@startuml
+@startuml media database
 ' hide the spot
 hide circle
 
@@ -6,9 +6,9 @@ hide circle
 skinparam linetype ortho
 
 entity "Media" as media {
-    *original_url: text <<PK>>
+    *masked_url: text <<PK>>
     --
-    *masked_url: text
+    *original_url: text 
 }
 
 @enduml
