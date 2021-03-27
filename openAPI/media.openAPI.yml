@@ -8,18 +8,41 @@ tags:
   - name: media
     description: media endpoints
 paths:
-  /notifications:
+  /media:
     post:
       tags:
-        - notifications
-      summary: Create a new notification
+        - media
+      summary: Add file
       operationId: create
       requestBody:
-        $ref: "#/components/requestBodies/createNotification"
+        $ref: "#/components/requestBodies/addFile"
       responses:
         201:
-          description: Notification Created Successfully
-          $ref: "#/components/responses/CreatedNotification"
+          description: File Added Successfully
+          $ref: "#/components/responses/AddedFile"
+        400:
+          description: Bad request
+          $ref: "#/components/responses/BadRequestError"
+        401:
+          description: Unauthorized.
+          $ref: "#/components/responses/UnauthorizedError"
+  /media/{fileURL}:  
+    get:
+      tags:
+        - media
+      summary: Get file
+      operationId: get
+      parameters:
+        - in: path
+          name: fileURL
+          required: true
+          schema:
+            type: number
+          description: url of file
+      responses:
+        200:
+          description: File retrieved successfully
+          $ref: "#/components/responses/getFile"
         400:
           description: Bad request
           $ref: "#/components/responses/BadRequestError"
@@ -27,7 +50,7 @@ paths:
           description: Unauthorized.
           $ref: "#/components/responses/UnauthorizedError"
         404:
-          description: Not Found
+          description: File not found.
           $ref: "#/components/responses/NotFoundError"
   /notifications/:
     get:
@@ -68,54 +91,17 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
 components:
   schemas:
-    createNotification:
+    AddedFile:
       type: object
       properties:
-        notified_id: 
-          type: number
-        action: 
+        maskedURL:
           type: string
-          enum:
-            - vote
-        entity:
-          type: number
-    getNotification:
+    AddFile:
       type: object
       properties:
-        action:
+        file:
           type: string
-          enum:
-            - vote
-        state:
-          type: string
-          enum: 
-            - unread
-            - read
-        notifier:
-          type: object
-          properties: 
-            id: 
-              type: number
-            profilePic: 
-              type: string
-            name: 
-              type: string
-        created_at:
-          type: string
-        entity: 
-          type: object
-          properties:
-            id: 
-              type: number
-            type:
-              type: string
-              enum:
-                - post
-            details:
-              type: object
-              properties:
-                description:
-                  type: string
+          format: binary
     GenericError:
       type: object
       properties:
@@ -128,30 +114,24 @@ components:
           type: number
           default: 123
   requestBodies:
-    createNotification:
+    addFile:
       required: true
       content:
-        application/json:
+        multipart/form-data:
           schema:
-            $ref: "#/components/schemas/createNotification"
-    updateNotification:
-      content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                state: 
-                  type: string
-                  enum:
-                    - unread
-                    - read
+            $ref: "#/components/schemas/AddFile"
   securitySchemes:
     firebaseAuth:
       type: http
       scheme: bearer
   responses:
-    CreatedNotification:
-      description: Notification created successfully
+    getFile:
+      description: Get file
+      content: 
+        image/*:
+          schema:
+            type: string
+            format: binary
     getNotifications:
       description: Get notification
       content:
