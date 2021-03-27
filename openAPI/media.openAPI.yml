@@ -52,43 +52,6 @@ paths:
         404:
           description: File not found.
           $ref: "#/components/responses/NotFoundError"
-  /notifications/:
-    get:
-      tags:
-        - "notifications"
-      summary: Get notifications
-      operationId: get notifications
-      responses:
-        200:
-          description: Get notifications
-          $ref: "#/components/responses/getNotifications"
-        401:
-          description: Unauthorized.
-          $ref: "#/components/responses/UnauthorizedError"
-  /notifications/{notificationid}:
-    patch: 
-      tags:
-        - "notifications"
-      summary: Update notification
-      operationId: Update notification
-      parameters:
-        - in: path
-          name: notificationid
-          required: true
-          schema:
-            type: number
-          description: id of notification
-      requestBody:
-        $ref: "#/components/requestBodies/updateNotification"
-      responses:
-        200:
-          description: updated notification
-        400:
-          description: Bad request
-          $ref: "#/components/responses/BadRequestError"
-        401:
-          description: Unauthorized
-          $ref: "#/components/responses/UnauthorizedError"
 components:
   schemas:
     AddedFile:
@@ -132,19 +95,13 @@ components:
           schema:
             type: string
             format: binary
-    getNotifications:
-      description: Get notification
+    AddedFile:
+      description: Added file
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              notificationsCount: 
-                type: number
-              notification: 
-                type: array
-                items:
-                  $ref: "#/components/schemas/getNotification"
+            $ref: "#/components/schemas/AddedFile"
+  
     BadRequestError:
       description: Bad Request Error occured
       content:
