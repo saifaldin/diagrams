@@ -82,6 +82,8 @@ components:
     getNotification:
       type: object
       properties:
+        notificationId: 
+          type: string
         action:
           type: string
           enum:

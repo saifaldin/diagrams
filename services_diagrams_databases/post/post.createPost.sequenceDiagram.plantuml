@@ -1,4 +1,4 @@
-@startuml
+@startuml create_post
 hide footbox
 
 actor user
@@ -13,10 +13,8 @@ postService -> mediaService: Binary files
 mediaService -> uploadService: New binary files
 uploadService -> mediaService: Original URLs
 mediaService -> postService: Masked URLs
-postService -> user: Success
+postService -> user: created post id + imgurl(s)
 else No binary files
-postService -> user: Success
+postService -> user: created post id
 end
 @enduml
-
-' Check when to send the success response in case of Binary files exist
