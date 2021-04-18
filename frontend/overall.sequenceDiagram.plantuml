@@ -8,7 +8,10 @@ participant notificationService
 
 == create post ==
 frontEnd -> postService : Request to create post
-postService -> frontEnd: created post id + file url(s) (if found)
+postService -> frontEnd: created post id + entities id (if found)
+
+frontEnd -> postService : Request to add media
+postService -> frontEnd: acknowledgment
 
 == get post ==
 frontEnd -> postService : Request to get post

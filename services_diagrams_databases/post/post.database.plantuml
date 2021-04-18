@@ -1,4 +1,4 @@
-@startuml
+@startuml posts_database
 ' hide the spot
 hide circle
 
@@ -12,6 +12,8 @@ entity "Post" as post {
     *post_type: text
     *isHidden: text
     *user_id: number <<FK>>
+    *ready: boolean
+    *created: boolean
 }
 
 entity "Media" as media {
@@ -36,6 +38,7 @@ entity "Option" as option {
     *post_id: number <<FK>>
     'content column is just text content of the text options
     'images are requested from media service by post id
+    *media_id: number <<FK>>
     *content : text
     *vote_count : number
 }
@@ -52,5 +55,6 @@ post ||..|{ media
 post ||..|{ group
 group ||..|{ option
 option ||..|{ vote
+media ||..|{ option
 
 @enduml

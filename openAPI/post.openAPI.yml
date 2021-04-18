@@ -13,7 +13,7 @@ paths:
       tags:
         - posts
       summary: Create a new post
-      operationId: create
+      operationId: createPost
       requestBody:
         $ref: "#/components/requestBodies/createPost"
       responses:
@@ -30,7 +30,7 @@ paths:
       tags:
         - "posts"
       summary: Get posts
-      operationId: get feed
+      operationId: getPost
       parameters:
         - in: query
           name: offset
@@ -52,12 +52,37 @@ paths:
         401:
           description: Unauthorized.
           $ref: "#/components/responses/UnauthorizedError"
+  /posts/{postid}/media: 
+    post: 
+      tags: 
+        - posts
+      summary: Add the media data related to a post
+      operationId: uploadOneMedia
+      requestBody:
+        $ref: "#/components/requestBodies/addMedia"
+      responses:
+        200:
+          description: Media were added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: 
+                    type: string
+                    example: 'Success'
+        400:
+          description: Bad request
+          $ref: "#/components/responses/BadRequestError"
+        401:
+          description: Unauthorized.
+          $ref: "#/components/responses/UnauthorizedError"
   /posts/{postid}:
     get:
       tags:
         - "posts"
       summary: Get one post
-      operationId: get one post
+      operationId: getOnePost
       parameters:
         - in: path
           name: postid
@@ -82,7 +107,7 @@ paths:
       tags:
         - "posts"
       summary: Delete one post
-      operationId: Delete one post
+      operationId: deleteOnePost
       parameters:
         - in: path
           name: postid
@@ -105,7 +130,7 @@ paths:
       tags:
         - "votes"
       summary: Add vote
-      operationId: Add vote
+      operationId: addVote
       parameters:
         - in: path
           name: optionid
@@ -162,36 +187,40 @@ components:
             - $ref: "#/components/schemas/postMiniSurveyOptionsPOST"
       required: ["isHidden", "type"]
     postTextOptionsPOST:
-      # type: object
-      # properties: 
-      #   options: 
-      #     type: array
-      #     items: 
-      #       type: object
-      #       properties:
-      #         optionBody: 
-      #           type: string
-        type: array
-        items: 
-          type: object
-          properties:
-            optionBody: 
-              type: string
+      type: object
+      properties:
+        optionsCount: 
+          type: number
+        options: 
+          type: array
+          items: 
+            type: object
+            properties:
+              optionBody: 
+                type: string
+              order:
+                type: number
     postImageOptionsPOST:
-      type: array
-      items: 
-        type: object
-        properties:
-          file: 
-            type: string
-            format: binary
+      type: object
+      properties:
+        optionsCount: 
+          type: number
+        options: 
+          type: array
+          items: 
+            type: object
+            properties:
+              optionOrder:
+                type: number
+              optionCaption: 
+                type: string
+            required:
+              - "optionName"
+              - "optionOrder"
 
     postMiniSurveyOptionsPOST:
       type: object
       properties:
-        image:
-          type: string
-          format: binary
         groups:
           type: array
           items:
@@ -283,13 +312,27 @@ components:
         statusCode:
           type: number
           default: 123
+    addMedia:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        optionId: 
+          type: string
   requestBodies:
     createPost:
       required: true
       content:
-        multipart/form-data:
+        application/json:
           schema:
             $ref: "#/components/schemas/post"
+    addMedia:
+      required: true
+      content: 
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/addMedia"
   securitySchemes:
     firebaseAuth:
       type: http
@@ -302,18 +345,18 @@ components:
           schema:
             type: object
             properties:
-              id:
+              postId:
                 type: string
-                example: "some-id"
-              imageUrls:
+                example: "23jk23l2343k2l23"
+              options:
                 type: array
                 items:
                   type: object
                   properties:
-                    url: 
+                    id: 
                       type: string
-                    name: 
-                      type: string
+                    order: 
+                      type: number
     getPosts:
       description: Get posts
       content:
