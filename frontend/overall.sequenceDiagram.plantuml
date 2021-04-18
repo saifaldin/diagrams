@@ -7,11 +7,22 @@ participant postService
 participant notificationService
 
 == create post ==
-frontEnd -> postService : Request to create post
-postService -> frontEnd: created post id + entities id (if found)
-
-frontEnd -> postService : Request to add media
-postService -> frontEnd: acknowledgment
+group Add post non-media data [caption, isHidden,\ntype]
+  frontEnd -> postService: Request to create post
+  postService -> frontEnd: created post id
+end
+group Add options non-media data
+  frontEnd -> postService: Request to create option groups
+  postService -> frontEnd: option groups and options ids
+end
+group Add post media if found
+  frontEnd -> postService: Request to add media if found
+  postService -> frontEnd: acknowledgement
+end
+group Flag post as finished
+  frontEnd -> postService: Request to flag post as finished
+  postService -> frontEnd: success
+end
 
 == get post ==
 frontEnd -> postService : Request to get post

@@ -7,13 +7,15 @@ info:
 tags:
   - name: posts
     description: Posts endpoints
+  - name: votes
+  - name: media
 paths:
   /posts:
     post:
       tags:
         - posts
       summary: Create a new post
-      operationId: createPost
+      operationId: create
       requestBody:
         $ref: "#/components/requestBodies/createPost"
       responses:
@@ -30,7 +32,7 @@ paths:
       tags:
         - "posts"
       summary: Get posts
-      operationId: getPost
+      operationId: get feed
       parameters:
         - in: query
           name: offset
@@ -52,25 +54,18 @@ paths:
         401:
           description: Unauthorized.
           $ref: "#/components/responses/UnauthorizedError"
-  /posts/{postid}/media: 
-    post: 
-      tags: 
+  /posts/{postid}/groups:
+    post:
+      tags:
         - posts
-      summary: Add the media data related to a post
-      operationId: uploadOneMedia
+      summary: add option group to post
+      operationId: create
       requestBody:
-        $ref: "#/components/requestBodies/addMedia"
+        $ref: "#/components/requestBodies/createGroup"
       responses:
-        200:
-          description: Media were added
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: 
-                    type: string
-                    example: 'Success'
+        201:
+          description: Group Created Successfully
+          $ref: "#/components/responses/createdGroup"
         400:
           description: Bad request
           $ref: "#/components/responses/BadRequestError"
@@ -82,7 +77,7 @@ paths:
       tags:
         - "posts"
       summary: Get one post
-      operationId: getOnePost
+      operationId: get one post
       parameters:
         - in: path
           name: postid
@@ -103,11 +98,27 @@ paths:
         401:
           description: Unauthorized.
           $ref: "#/components/responses/UnauthorizedError"
+    patch:
+      tags:
+        - posts
+      summary: patch post
+      operationId: flagPostAsFinished
+      requestBody:
+        $ref: "#/components/requestBodies/postFinishedFlag"
+      responses:
+        204:
+          description: Post Flagged Successfully
+        400:
+          description: Bad request
+          $ref: "#/components/responses/BadRequestError"
+        401:
+          description: Unauthorized.
+          $ref: "#/components/responses/UnauthorizedError"
     delete:
       tags:
         - "posts"
       summary: Delete one post
-      operationId: deleteOnePost
+      operationId: Delete one post
       parameters:
         - in: path
           name: postid
@@ -125,12 +136,37 @@ paths:
         401:
           description: Unauthorized.
           $ref: "#/components/responses/UnauthorizedError"
+  /media:
+    post:
+      tags:
+        - media
+      summary: Add the media data related to a post
+      operationId: uploadOneMedia
+      requestBody:
+        $ref: "#/components/requestBodies/addMedia"
+      responses:
+        200:
+          description: Media were added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "acknowledged"
+        400:
+          description: Bad request
+          $ref: "#/components/responses/BadRequestError"
+        401:
+          description: Unauthorized.
+          $ref: "#/components/responses/UnauthorizedError"
   /votes/{optionid}:
-    put: 
+    put:
       tags:
         - "votes"
       summary: Add vote
-      operationId: addVote
+      operationId: Add vote
       parameters:
         - in: path
           name: optionid
@@ -145,16 +181,16 @@ paths:
           description: Add vote on option
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: object
-                  properties: 
-                    votesCount: 
+                  properties:
+                    votesCount:
                       type: number
-                    optionId: 
+                    optionId:
                       type: string
-                
+
         400:
           description: Bad request
           $ref: "#/components/responses/BadRequestError"
@@ -166,6 +202,44 @@ paths:
           $ref: "#/components/responses/ConflictError"
 components:
   schemas:
+    option:
+      type: object
+      properties:
+        body:
+          type: string
+    addMedia:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        entityType:
+          type: string
+          enum:
+            - post
+            - group
+            - option
+        entityId:
+          type: string
+    createGroupSchema:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              options:
+                type: array
+                items:
+                  $ref: "#/components/schemas/option"
+    postFinishedFlagSchema:
+      type: object
+      properties:
+        finished:
+          type: boolean
     post:
       type: object
       properties:
@@ -179,48 +253,43 @@ components:
           type: string
           enum: [text, image, miniSurvey]
           example: "text"
-        options:
-          type: object
-          oneOf:
-            - $ref: "#/components/schemas/postTextOptionsPOST"
-            - $ref: "#/components/schemas/postImageOptionsPOST"
-            - $ref: "#/components/schemas/postMiniSurveyOptionsPOST"
+        # options:
+        #   type: object
+        #   oneOf:
+        #     - $ref: "#/components/schemas/postTextOptionsPOST"
+        #     - $ref: "#/components/schemas/postImageOptionsPOST"
+        #     - $ref: "#/components/schemas/postMiniSurveyOptionsPOST"
       required: ["isHidden", "type"]
     postTextOptionsPOST:
-      type: object
-      properties:
-        optionsCount: 
-          type: number
-        options: 
-          type: array
-          items: 
-            type: object
-            properties:
-              optionBody: 
-                type: string
-              order:
-                type: number
+      # type: object
+      # properties:
+      #   options:
+      #     type: array
+      #     items:
+      #       type: object
+      #       properties:
+      #         optionBody:
+      #           type: string
+      type: array
+      items:
+        type: object
+        properties:
+          optionBody:
+            type: string
     postImageOptionsPOST:
-      type: object
-      properties:
-        optionsCount: 
-          type: number
-        options: 
-          type: array
-          items: 
-            type: object
-            properties:
-              optionOrder:
-                type: number
-              optionCaption: 
-                type: string
-            required:
-              - "optionName"
-              - "optionOrder"
-
+      type: array
+      items:
+        type: object
+        properties:
+          file:
+            type: string
+            format: binary
     postMiniSurveyOptionsPOST:
       type: object
       properties:
+        image:
+          type: string
+          format: binary
         groups:
           type: array
           items:
@@ -269,16 +338,16 @@ components:
     getPost:
       type: object
       properties:
-        user: 
+        user:
           type: object
-          properties: 
-            id: 
+          properties:
+            id:
               type: string
               example: "some-id"
-            name: 
+            name:
               type: string
               example: "John Doe"
-            profilePic: 
+            profilePic:
               type: string
               example: "URL"
         id:
@@ -296,11 +365,10 @@ components:
             - $ref: "#/components/schemas/postTextOptionsGET"
             - $ref: "#/components/schemas/postImageOptionsGET"
             - $ref: "#/components/schemas/postMiniSurveyOptionsGET"
-        createdAt: 
+        createdAt:
           type: string
           example: "13 May, 2020 UTC"
-      required:
-        ['createdAt', 'content', 'isHidden', 'id']
+      required: ["createdAt", "content", "isHidden", "id"]
     GenericError:
       type: object
       properties:
@@ -312,24 +380,28 @@ components:
         statusCode:
           type: number
           default: 123
-    addMedia:
-      type: object
-      properties:
-        file:
-          type: string
-          format: binary
-        optionId: 
-          type: string
   requestBodies:
-    createPost:
+    createGroup:
       required: true
       content:
         application/json:
           schema:
+            $ref: "#/components/schemas/createGroupSchema"
+    createPost:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
             $ref: "#/components/schemas/post"
+    postFinishedFlag:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/postFinishedFlagSchema"
     addMedia:
       required: true
-      content: 
+      content:
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/addMedia"
@@ -338,6 +410,27 @@ components:
       type: http
       scheme: bearer
   responses:
+    createdGroup:
+      description: Group created successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              groups:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    options:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
     CreatedPost:
       description: Post created successfully
       content:
@@ -345,18 +438,18 @@ components:
           schema:
             type: object
             properties:
-              postId:
+              id:
                 type: string
-                example: "23jk23l2343k2l23"
-              options:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id: 
-                      type: string
-                    order: 
-                      type: number
+                example: "some-id"
+              # imageUrls:
+              #   type: array
+              #   items:
+              #     type: object
+              #     properties:
+              #       url:
+              #         type: string
+              #       name:
+              #         type: string
     getPosts:
       description: Get posts
       content:
@@ -364,14 +457,14 @@ components:
           schema:
             type: object
             properties:
-              postsCount: 
+              postsCount:
                 type: number
-              posts: 
+              posts:
                 type: array
                 items:
                   $ref: "#/components/schemas/getPost"
     deletePost:
-      description: Post deleted     
+      description: Post deleted
     BadRequestError:
       description: Bad Request Error occured
       content:
@@ -398,9 +491,9 @@ components:
             $ref: "#/components/schemas/GenericError"
     NotFoundError:
       description: Not Found
-      content: 
+      content:
         application/json:
-          schema: 
+          schema:
             $ref: "#/components/schemas/GenericError"
 servers:
   - description: Try it Now
