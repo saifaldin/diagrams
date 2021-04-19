@@ -200,7 +200,38 @@ paths:
           $ref: "#/components/responses/ConflictError"
 components:
   schemas:
-    option:
+    groupResponseBody:
+      type: object
+      properties:
+        id: 
+          type: string
+        name:
+          type: string
+        imageUrl: 
+          type: string
+        options: 
+          type: array
+          items:
+            $ref: "#/components/schemas/optionResponseBody" 
+    groupCreationBody:
+      type: object
+      properties:
+        name:
+          type: string
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/optionRequestBody"
+    optionResponseBody:
+      type: object
+      properties:
+        id:
+          type: string
+        body: 
+          type: string
+        imageUrl: 
+          type: string
+    optionRequestBody:
       type: object
       properties:
         body:
@@ -225,20 +256,13 @@ components:
         groups:
           type: array
           items:
-            type: object
-            properties:
-              name:
-                type: string
-              options:
-                type: array
-                items:
-                  $ref: "#/components/schemas/option"
+            $ref: "#/components/schemas/groupCreationBody"
     postFinishedFlagSchema:
       type: object
       properties:
         finished:
           type: boolean
-    post:
+    postCreation:
       type: object
       properties:
         caption:
@@ -250,50 +274,8 @@ components:
         type:
           type: string
           enum: [text, image, miniSurvey]
-          example: "text"
-        # options:
-        #   type: object
-        #   oneOf:
-        #     - $ref: "#/components/schemas/postTextOptionsPOST"
-        #     - $ref: "#/components/schemas/postImageOptionsPOST"
-        #     - $ref: "#/components/schemas/postMiniSurveyOptionsPOST"
+          example: "textPoll"
       required: ["isHidden", "type"]
-    postTextOptionsGET:
-      type: array
-      items:
-        type: object
-        properties:
-          content:
-            type: string
-          voteCount:
-            type: number
-          optionId:
-            type: string
-    postImageOptionsGET:
-      type: array
-      items:
-        type: object
-        properties:
-          url:
-            type: string
-          voteCount:
-            type: number
-          optionId:
-            type: string
-    postMiniSurveyOptionsGET:
-      type: object
-      properties:
-        image:
-          type: string
-        groups:
-          type: array
-          items:
-            type: object
-            properties:
-              groupTitle:
-                type: string
-              textOptions:
-                $ref: "#/components/schemas/postTextOptionsGET"
     singlePostRequest:
       type: object
       properties:
@@ -318,16 +300,23 @@ components:
         isHidden:
           type: boolean
           example: false
-        content:
-          type: object
-          oneOf:
-            - $ref: "#/components/schemas/postTextOptionsGET"
-            - $ref: "#/components/schemas/postImageOptionsGET"
-            - $ref: "#/components/schemas/postMiniSurveyOptionsGET"
         createdAt:
           type: string
           example: "13 May, 2020 UTC"
-      required: ["createdAt", "content", "isHidden", "id"]
+        type:
+          type: string
+          enum: [text, image, miniSurvey]
+          example: "textPoll"
+        imageUrl: 
+          type: string
+        optionsGroups: 
+          type: object
+          properties: 
+            groups:
+              type: array
+              items:
+                $ref: "#/components/schemas/groupResponseBody"
+      required: ["createdAt", "isHidden", "id", "type", "optionsGroups"]
     GenericError:
       type: object
       properties:
@@ -349,9 +338,9 @@ components:
     postCreation:
       required: true
       content:
-        multipart/form-data:
+        application/json:
           schema:
-            $ref: "#/components/schemas/post"
+            $ref: "#/components/schemas/postCreation"
     postFinishedFlag:
       required: true
       content:
