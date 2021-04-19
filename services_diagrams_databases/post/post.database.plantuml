@@ -9,7 +9,7 @@ entity "Post" as post {
     *id : number <<generated>>
     --
     *caption: text
-    *post_type: text
+    *type: text
     *isHidden: text
     *user_id: number <<FK>>
     *ready: boolean
@@ -20,6 +20,8 @@ entity "Media" as media {
     *id : number <<generated>>
     --
     *post_id: number <<FK>>
+    *group_id: number <<FK>>
+    *option_id: number <<FK>>
     *URL: text
 }
 
@@ -28,18 +30,16 @@ entity "Group" as group {
     --
     *post_id: number <<FK>>
     *option_id: number <<FK>>
-    *group_number : number
-    *group_name : text
+    *name : text
 }
 
 entity "Option" as option {
     *id : number <<generated>>
     --
-    *post_id: number <<FK>>
     'content column is just text content of the text options
     'images are requested from media service by post id
-    *media_id: number <<FK>>
-    *content : text
+    *group_id : <<FK>>
+    *body : text
     *vote_count : number
 }
 
@@ -50,11 +50,11 @@ entity "Vote" as vote {
     *user_id: number <<FK>>
 }
 
-post ||..|{ option
 post ||..|{ media
 post ||..|{ group
 group ||..|{ option
 option ||..|{ vote
-media ||..|{ option
+media ||..|| option
+media ||..|| group
 
 @enduml

@@ -213,6 +213,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/optionResponseBody" 
+      required:
+        - "id"
+        - "options"
     groupCreationBody:
       type: object
       properties:
@@ -231,6 +234,8 @@ components:
           type: string
         imageUrl: 
           type: string
+      required:
+        - "id"
     optionRequestBody:
       type: object
       properties:
