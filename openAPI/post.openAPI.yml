@@ -15,9 +15,9 @@ paths:
       tags:
         - posts
       summary: Create a new post
-      operationId: create
+      operationId: createPost
       requestBody:
-        $ref: "#/components/requestBodies/createPost"
+        $ref: "#/components/requestBodies/postCreation"
       responses:
         201:
           description: Post Created Successfully
@@ -32,7 +32,7 @@ paths:
       tags:
         - "posts"
       summary: Get posts
-      operationId: get feed
+      operationId: getPosts
       parameters:
         - in: query
           name: offset
@@ -47,7 +47,7 @@ paths:
       responses:
         200:
           description: Get all posts
-          $ref: "#/components/responses/getPosts"
+          $ref: "#/components/responses/postsRequest"
         400:
           description: Bad request
           $ref: "#/components/responses/BadRequestError"
@@ -59,13 +59,13 @@ paths:
       tags:
         - posts
       summary: add option group to post
-      operationId: create
+      operationId: addOptionsGroup
       requestBody:
-        $ref: "#/components/requestBodies/createGroup"
+        $ref: "#/components/requestBodies/optionsGroupCreation"
       responses:
         201:
           description: Group Created Successfully
-          $ref: "#/components/responses/createdGroup"
+          $ref: "#/components/responses/createdOptionsGroup"
         400:
           description: Bad request
           $ref: "#/components/responses/BadRequestError"
@@ -76,8 +76,8 @@ paths:
     get:
       tags:
         - "posts"
-      summary: Get one post
-      operationId: get one post
+      summary: Get single post
+      operationId: getSinglePost
       parameters:
         - in: path
           name: postid
@@ -91,7 +91,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/getPost"
+                $ref: "#/components/schemas/singlePostRequest"
         400:
           description: Bad request
           $ref: "#/components/responses/BadRequestError"
@@ -118,7 +118,7 @@ paths:
       tags:
         - "posts"
       summary: Delete one post
-      operationId: Delete one post
+      operationId: deleteSinglePost
       parameters:
         - in: path
           name: postid
@@ -129,7 +129,7 @@ paths:
       responses:
         204:
           description: Delete one post
-          $ref: "#/components/responses/deletePost"
+          $ref: "#/components/responses/singlePostDeletion"
         404:
           description: Not Found
           $ref: "#/components/responses/NotFoundError"
@@ -143,7 +143,7 @@ paths:
       summary: Add the media data related to a post
       operationId: uploadOneMedia
       requestBody:
-        $ref: "#/components/requestBodies/addMedia"
+        $ref: "#/components/requestBodies/mediaCreation"
       responses:
         200:
           description: Media were added
@@ -166,7 +166,7 @@ paths:
       tags:
         - "votes"
       summary: Add vote
-      operationId: Add vote
+      operationId: addVote
       parameters:
         - in: path
           name: optionid
@@ -174,8 +174,6 @@ paths:
           schema:
             type: number
           description: id of option
-      # requestBody:
-      #   $ref: "#/components/requestBodie/addVote"
       responses:
         200:
           description: Add vote on option
@@ -207,7 +205,7 @@ components:
       properties:
         body:
           type: string
-    addMedia:
+    mediaCreation:
       type: object
       properties:
         file:
@@ -221,7 +219,7 @@ components:
             - option
         entityId:
           type: string
-    createGroupSchema:
+    optionsGroupCreation:
       type: object
       properties:
         groups:
@@ -260,45 +258,6 @@ components:
         #     - $ref: "#/components/schemas/postImageOptionsPOST"
         #     - $ref: "#/components/schemas/postMiniSurveyOptionsPOST"
       required: ["isHidden", "type"]
-    postTextOptionsPOST:
-      # type: object
-      # properties:
-      #   options:
-      #     type: array
-      #     items:
-      #       type: object
-      #       properties:
-      #         optionBody:
-      #           type: string
-      type: array
-      items:
-        type: object
-        properties:
-          optionBody:
-            type: string
-    postImageOptionsPOST:
-      type: array
-      items:
-        type: object
-        properties:
-          file:
-            type: string
-            format: binary
-    postMiniSurveyOptionsPOST:
-      type: object
-      properties:
-        image:
-          type: string
-          format: binary
-        groups:
-          type: array
-          items:
-            type: object
-            properties:
-              groupTitle:
-                type: string
-              textOptions:
-                $ref: "#/components/schemas/postTextOptionsPOST"
     postTextOptionsGET:
       type: array
       items:
@@ -335,7 +294,7 @@ components:
                 type: string
               textOptions:
                 $ref: "#/components/schemas/postTextOptionsGET"
-    getPost:
+    singlePostRequest:
       type: object
       properties:
         user:
@@ -381,13 +340,13 @@ components:
           type: number
           default: 123
   requestBodies:
-    createGroup:
+    optionsGroupCreation:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/createGroupSchema"
-    createPost:
+            $ref: "#/components/schemas/optionsGroupCreation"
+    postCreation:
       required: true
       content:
         multipart/form-data:
@@ -399,18 +358,18 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/postFinishedFlagSchema"
-    addMedia:
+    mediaCreation:
       required: true
       content:
         multipart/form-data:
           schema:
-            $ref: "#/components/schemas/addMedia"
+            $ref: "#/components/schemas/mediaCreation"
   securitySchemes:
     firebaseAuth:
       type: http
       scheme: bearer
   responses:
-    createdGroup:
+    createdOptionsGroup:
       description: Group created successfully
       content:
         application/json:
@@ -450,7 +409,7 @@ components:
               #         type: string
               #       name:
               #         type: string
-    getPosts:
+    postsRequest:
       description: Get posts
       content:
         application/json:
@@ -462,8 +421,8 @@ components:
               posts:
                 type: array
                 items:
-                  $ref: "#/components/schemas/getPost"
-    deletePost:
+                  $ref: "#/components/schemas/singlePostRequest"
+    singlePostDeletion:
       description: Post deleted
     BadRequestError:
       description: Bad Request Error occured
