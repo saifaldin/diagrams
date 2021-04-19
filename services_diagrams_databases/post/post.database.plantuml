@@ -29,7 +29,6 @@ entity "Group" as group {
     *id : number <<generated>>
     --
     *post_id: number <<FK>>
-    *option_id: number <<FK>>
     *name : text
 }
 
