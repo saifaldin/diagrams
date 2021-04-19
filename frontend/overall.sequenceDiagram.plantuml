@@ -7,15 +7,15 @@ participant postService
 participant notificationService
 
 == create post ==
-group Add post non-media data [caption, isHidden,\ntype]
+group Add post non-media data
   frontEnd -> postService: Request to create post
   postService -> frontEnd: created post id
 end
-group Add options non-media data
+group Add options groups non-media data
   frontEnd -> postService: Request to create option groups
   postService -> frontEnd: option groups and options ids
 end
-group Add post media if found
+group Add media if found
   frontEnd -> postService: Request to add media if found
   postService -> frontEnd: acknowledgement
 end

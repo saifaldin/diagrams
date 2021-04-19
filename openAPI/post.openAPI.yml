@@ -17,17 +17,17 @@ paths:
       summary: Create a new post
       operationId: createPost
       requestBody:
-        $ref: "#/components/requestBodies/postCreation"
+        $ref: "#/components/requestBodies/post_creation_request"
       responses:
         201:
           description: Post Created Successfully
-          $ref: "#/components/responses/CreatedPost"
+          $ref: "#/components/responses/created_post"
         400:
           description: Bad request
-          $ref: "#/components/responses/BadRequestError"
+          $ref: "#/components/responses/error_bad_request"
         401:
           description: Unauthorized.
-          $ref: "#/components/responses/UnauthorizedError"
+          $ref: "#/components/responses/error_unauthorized"
     get:
       tags:
         - "posts"
@@ -47,37 +47,37 @@ paths:
       responses:
         200:
           description: Get all posts
-          $ref: "#/components/responses/postsRequest"
+          $ref: "#/components/responses/feed_response"
         400:
           description: Bad request
-          $ref: "#/components/responses/BadRequestError"
+          $ref: "#/components/responses/error_bad_request"
         401:
           description: Unauthorized.
-          $ref: "#/components/responses/UnauthorizedError"
+          $ref: "#/components/responses/error_unauthorized"
   /posts/{postid}/groups:
     post:
       tags:
         - posts
       summary: add option group to post
-      operationId: addOptionsGroup
+      operationId: createOptionsGroup
       requestBody:
-        $ref: "#/components/requestBodies/optionsGroupCreation"
+        $ref: "#/components/requestBodies/options_group_creation"
       responses:
         201:
           description: Group Created Successfully
-          $ref: "#/components/responses/createdOptionsGroup"
+          $ref: "#/components/responses/created_options_group"
         400:
           description: Bad request
-          $ref: "#/components/responses/BadRequestError"
+          $ref: "#/components/responses/error_bad_request"
         401:
           description: Unauthorized.
-          $ref: "#/components/responses/UnauthorizedError"
+          $ref: "#/components/responses/error_unauthorized"
   /posts/{postid}:
     get:
       tags:
         - "posts"
       summary: Get single post
-      operationId: getSinglePost
+      operationId: getOnePost
       parameters:
         - in: path
           name: postid
@@ -91,34 +91,34 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/singlePostRequest"
+                $ref: "#/components/schemas/single_post_response"
         400:
           description: Bad request
-          $ref: "#/components/responses/BadRequestError"
+          $ref: "#/components/responses/error_bad_request"
         401:
           description: Unauthorized.
-          $ref: "#/components/responses/UnauthorizedError"
+          $ref: "#/components/responses/error_unauthorized"
     patch:
       tags:
         - posts
       summary: patch post
       operationId: flagPostAsFinished
       requestBody:
-        $ref: "#/components/requestBodies/postFinishedFlag"
+        $ref: "#/components/requestBodies/post_finished_flag_request"
       responses:
         204:
           description: Post Flagged Successfully
         400:
           description: Bad request
-          $ref: "#/components/responses/BadRequestError"
+          $ref: "#/components/responses/error_bad_request"
         401:
           description: Unauthorized.
-          $ref: "#/components/responses/UnauthorizedError"
+          $ref: "#/components/responses/error_unauthorized"
     delete:
       tags:
         - "posts"
       summary: Delete one post
-      operationId: deleteSinglePost
+      operationId: deleteOnePost
       parameters:
         - in: path
           name: postid
@@ -129,13 +129,13 @@ paths:
       responses:
         204:
           description: Delete one post
-          $ref: "#/components/responses/singlePostDeletion"
+          $ref: "#/components/responses/single_post_deletion_response"
         404:
           description: Not Found
-          $ref: "#/components/responses/NotFoundError"
+          $ref: "#/components/responses/error_not_found"
         401:
           description: Unauthorized.
-          $ref: "#/components/responses/UnauthorizedError"
+          $ref: "#/components/responses/error_unauthorized"
   /media:
     post:
       tags:
@@ -143,7 +143,7 @@ paths:
       summary: Add the media data related to a post
       operationId: uploadOneMedia
       requestBody:
-        $ref: "#/components/requestBodies/mediaCreation"
+        $ref: "#/components/requestBodies/media_creation_request"
       responses:
         200:
           description: Media were added
@@ -157,10 +157,10 @@ paths:
                     example: "acknowledged"
         400:
           description: Bad request
-          $ref: "#/components/responses/BadRequestError"
+          $ref: "#/components/responses/error_bad_request"
         401:
           description: Unauthorized.
-          $ref: "#/components/responses/UnauthorizedError"
+          $ref: "#/components/responses/error_unauthorized"
   /votes/{optionid}:
     put:
       tags:
@@ -184,39 +184,43 @@ paths:
                 items:
                   type: object
                   properties:
-                    votesCount:
+                    votes_count:
                       type: number
                     optionId:
                       type: string
-
         400:
           description: Bad request
-          $ref: "#/components/responses/BadRequestError"
+          $ref: "#/components/responses/error_bad_request"
         401:
           description: Unauthorized
-          $ref: "#/components/responses/UnauthorizedError"
+          $ref: "#/components/responses/error_unauthorized"
         409:
           description: Conflict when user votes twice on same option
-          $ref: "#/components/responses/ConflictError"
+          $ref: "#/components/responses/error_conflict"
 components:
   schemas:
-    groupResponseBody:
+    options_group_creation_response:
       type: object
       properties:
-        id: 
+        id:
           type: string
         name:
           type: string
-        imageUrl: 
-          type: string
-        options: 
+        image_url:
           type: array
           items:
-            $ref: "#/components/schemas/optionResponseBody" 
+            type: object
+            properties:
+              url:
+                type: string
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/options_creation_response"
       required:
         - "id"
         - "options"
-    groupCreationBody:
+    options_group_creation_request:
       type: object
       properties:
         name:
@@ -224,64 +228,62 @@ components:
         options:
           type: array
           items:
-            $ref: "#/components/schemas/optionRequestBody"
-    optionResponseBody:
+            $ref: "#/components/schemas/options_creation_request"
+    options_creation_response:
       type: object
       properties:
         id:
           type: string
-        body: 
+        body:
           type: string
-        imageUrl: 
-          type: string
+        image_url:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
       required:
         - "id"
-    optionRequestBody:
+    options_creation_request:
       type: object
       properties:
         body:
           type: string
-    mediaCreation:
+    media_creation_request:
       type: object
       properties:
         file:
           type: string
           format: binary
-        entityType:
+        entity_type:
           type: string
           enum:
             - post
             - group
             - option
-        entityId:
+        entity_id:
           type: string
-    optionsGroupCreation:
-      type: object
-      properties:
-        groups:
-          type: array
-          items:
-            $ref: "#/components/schemas/groupCreationBody"
-    postFinishedFlagSchema:
+    post_finished_flag_request:
       type: object
       properties:
         finished:
           type: boolean
-    postCreation:
+    post_creation_request:
       type: object
       properties:
         caption:
           type: string
           example: "test caption"
-        isHidden:
+        is_hidden:
           type: boolean
           example: false
         type:
           type: string
-          enum: [text, image, miniSurvey]
-          example: "textPoll"
-      required: ["isHidden", "type"]
-    singlePostRequest:
+          enum: [text, image, mini_survey]
+          example: "text_poll"
+      required: ["is_hidden", "type"]
+    single_post_response:
       type: object
       properties:
         user:
@@ -293,7 +295,7 @@ components:
             name:
               type: string
               example: "John Doe"
-            profilePic:
+            profile_pic:
               type: string
               example: "URL"
         id:
@@ -302,27 +304,32 @@ components:
         caption:
           type: string
           example: "some-caption"
-        isHidden:
+        is_hidden:
           type: boolean
           example: false
-        createdAt:
+        created_at:
           type: string
           example: "13 May, 2020 UTC"
         type:
           type: string
-          enum: [text, image, miniSurvey]
-          example: "textPoll"
-        imageUrl: 
-          type: string
-        optionsGroups: 
+          enum: [text, image, mini_survey]
+          example: "text_poll"
+        image_url:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+        options_groups:
           type: object
-          properties: 
+          properties:
             groups:
               type: array
               items:
-                $ref: "#/components/schemas/groupResponseBody"
-      required: ["createdAt", "isHidden", "id", "type", "optionsGroups"]
-    GenericError:
+                $ref: "#/components/schemas/options_group_creation_response"
+      required: ["created_at", "is_hidden", "id", "type", "options_groups"]
+    generic_error:
       type: object
       properties:
         message:
@@ -330,40 +337,45 @@ components:
           items:
             type: string
           example: ["error1", "error2"]
-        statusCode:
+        status_code:
           type: number
           default: 123
   requestBodies:
-    optionsGroupCreation:
+    options_group_creation:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/optionsGroupCreation"
-    postCreation:
+            type: object
+            properties:
+              groups:
+                type: array
+                items:
+                  $ref: "#/components/schemas/options_group_creation_request"
+    post_creation_request:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/postCreation"
-    postFinishedFlag:
+            $ref: "#/components/schemas/post_creation_request"
+    post_finished_flag_request:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/postFinishedFlagSchema"
-    mediaCreation:
+            $ref: "#/components/schemas/post_finished_flag_request"
+    media_creation_request:
       required: true
       content:
         multipart/form-data:
           schema:
-            $ref: "#/components/schemas/mediaCreation"
+            $ref: "#/components/schemas/media_creation_request"
   securitySchemes:
     firebaseAuth:
       type: http
       scheme: bearer
   responses:
-    createdOptionsGroup:
+    created_options_group:
       description: Group created successfully
       content:
         application/json:
@@ -384,7 +396,7 @@ components:
                         properties:
                           id:
                             type: string
-    CreatedPost:
+    created_post:
       description: Post created successfully
       content:
         application/json:
@@ -403,7 +415,7 @@ components:
               #         type: string
               #       name:
               #         type: string
-    postsRequest:
+    feed_response:
       description: Get posts
       content:
         application/json:
@@ -415,39 +427,39 @@ components:
               posts:
                 type: array
                 items:
-                  $ref: "#/components/schemas/singlePostRequest"
-    singlePostDeletion:
+                  $ref: "#/components/schemas/single_post_response"
+    single_post_deletion_response:
       description: Post deleted
-    BadRequestError:
+    error_bad_request:
       description: Bad Request Error occured
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/GenericError"
-    UnauthorizedError:
+            $ref: "#/components/schemas/generic_error"
+    error_unauthorized:
       description: Unauthorized.
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/GenericError"
-    ConflictError:
+            $ref: "#/components/schemas/generic_error"
+    error_conflict:
       description: Conflict when user votes twice on same option.
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/GenericError"
-    InternalServerError:
+            $ref: "#/components/schemas/generic_error"
+    error_internal_server_error:
       description: Internal Server Error
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/GenericError"
-    NotFoundError:
+            $ref: "#/components/schemas/generic_error"
+    error_not_found:
       description: Not Found
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/GenericError"
+            $ref: "#/components/schemas/generic_error"
 servers:
   - description: Try it Now
     url: https://pickly-posts-be-dev.m3ntorship.net/
