@@ -63,6 +63,14 @@ paths:
       operationId: createOptionsGroup
       requestBody:
         $ref: "#/components/requestBodies/options_group_creation"
+      parameters:
+        - in: path
+          name: postid
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: id of post needed
       responses:
         201:
           description: Group Created Successfully
