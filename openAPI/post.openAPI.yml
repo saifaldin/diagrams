@@ -217,6 +217,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/options_creation_response"
+          maxItems: 4
       required:
         - "id"
         - "options"
@@ -243,6 +244,7 @@ components:
             properties:
               url:
                 type: string
+          maxItems: 4
       required:
         - "id"
     options_creation_request:
@@ -321,6 +323,7 @@ components:
             properties:
               url:
                 type: string
+          maxItems: 4
         options_groups:
           type: object
           properties:
@@ -328,6 +331,7 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/options_group_creation_response"
+              maxItems: 4
       required: ["created_at", "is_hidden", "id", "type", "options_groups"]
     generic_error:
       type: object
@@ -406,15 +410,6 @@ components:
               id:
                 type: string
                 example: "some-id"
-              # imageUrls:
-              #   type: array
-              #   items:
-              #     type: object
-              #     properties:
-              #       url:
-              #         type: string
-              #       name:
-              #         type: string
     feed_response:
       description: Get posts
       content:
@@ -428,6 +423,7 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/single_post_response"
+                maxItems: 4
     single_post_deletion_response:
       description: Post deleted
     error_bad_request:
