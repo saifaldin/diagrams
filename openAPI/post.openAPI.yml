@@ -61,14 +61,6 @@ paths:
         - posts
       summary: add option group to post
       operationId: createOptionsGroup
-      parameters:
-        - in: path
-          name: postid
-          required: true
-          schema:
-            type: string
-            format: uuid
-          description: id of post needed
       requestBody:
         $ref: "#/components/requestBodies/options_group_creation"
       responses:
@@ -162,24 +154,7 @@ paths:
       summary: Add the media data related to a post
       operationId: uploadOneMedia
       requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              allOf:
-                - type: object
-                  properties:
-                    entity_type:
-                      type: string
-                      enum:
-                        - post
-                        - group
-                        - option
-                    entity_id:
-                      type: string
-                      format: uuid
-                - type: string
-                  format: binary
-                # - $ref: "#/components/requestBodies/media_creation_request"
+        $ref: "#/components/requestBodies/media_creation_request"
       responses:
         200:
           description: Media were added
@@ -327,7 +302,7 @@ components:
             - option
         entity_id:
           type: string
-          format: uuid
+          # x-faker: random.uuid
       required:
         - "file"
         - "entity_type"
