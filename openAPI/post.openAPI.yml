@@ -17,7 +17,11 @@ paths:
       summary: Create a new post
       operationId: createPost
       requestBody:
-        $ref: "#/components/requestBodies/post_creation_request"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/post_creation_request"
       responses:
         201:
           description: Post Created Successfully
@@ -62,7 +66,19 @@ paths:
       summary: add option group to post
       operationId: createOptionsGroup
       requestBody:
-        $ref: "#/components/requestBodies/options_group_creation"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/options_group_creation"
+      parameters:
+        - in: path
+          name: postid
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: id of post needed
       responses:
         201:
           description: Group Created Successfully
@@ -114,7 +130,11 @@ paths:
             format: uuid
           description: id of post needed
       requestBody:
-        $ref: "#/components/requestBodies/post_finished_flag_request"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/post_finished_flag_request"
       responses:
         204:
           description: Post Flagged Successfully
@@ -154,7 +174,11 @@ paths:
       summary: Add the media data related to a post
       operationId: uploadOneMedia
       requestBody:
-        $ref: "#/components/requestBodies/media_creation_request"
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/media_creation_request"
       responses:
         200:
           description: Media were added
@@ -215,6 +239,15 @@ paths:
           $ref: "#/components/responses/error_conflict"
 components:
   schemas:
+    options_group_creation: 
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/options_group_creation_request"
+      required:
+        - "groups"
     options_group_creation_response:
       type: object
       properties:
@@ -302,7 +335,7 @@ components:
             - option
         entity_id:
           type: string
-          # x-faker: random.uuid
+          format: uuid
       required:
         - "file"
         - "entity_type"
@@ -400,38 +433,6 @@ components:
         status_code:
           type: number
           default: 123
-  requestBodies:
-    options_group_creation:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              groups:
-                type: array
-                items:
-                  $ref: "#/components/schemas/options_group_creation_request"
-            required:
-              - "groups"
-    post_creation_request:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/post_creation_request"
-    post_finished_flag_request:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/post_finished_flag_request"
-    media_creation_request:
-      required: true
-      content:
-        multipart/form-data:
-          schema:
-            $ref: "#/components/schemas/media_creation_request"
   securitySchemes:
     firebaseAuth:
       type: http
