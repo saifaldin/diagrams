@@ -239,7 +239,7 @@ paths:
           $ref: "#/components/responses/error_conflict"
 components:
   schemas:
-    options_group_creation: 
+    options_group_creation:
       type: object
       properties:
         groups:
@@ -336,10 +336,10 @@ components:
         entity_id:
           type: string
           format: uuid
-      required:
-        - "file"
-        - "entity_type"
-        - "entity_id"
+      # required:
+      #   - "file"
+      #   - "entity_type"
+      #   - "entity_id"
     post_finished_flag_request:
       type: object
       properties:
@@ -527,6 +527,3 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/generic_error"
-servers:
-  - description: Try it Now
-    url: https://pickly-posts-be-dev.m3ntorship.net/
