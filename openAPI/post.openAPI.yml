@@ -48,6 +48,7 @@ paths:
           schema:
             type: number
           description: The numbers of items to return
+
       responses:
         200:
           description: Get all posts
@@ -493,6 +494,7 @@ components:
                 type: array
                 items:
                   $ref: "#/components/schemas/single_post_response"
+                maxItems: 4
     single_post_deletion_response:
       description: Post deleted
     error_bad_request:
