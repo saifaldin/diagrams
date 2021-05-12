@@ -10,7 +10,7 @@ entity "Post" as post {
     --
     *caption: text
     *type: text
-    *isHidden: text
+    *is_Hidden: text
     *user_id: number <<FK>>
     *ready: boolean
     *created: boolean
